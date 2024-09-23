@@ -1,13 +1,13 @@
-// components/TaskForm.js
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { addTask, updateTask } from '../Redux/taskActions';
 
-const TaskForm = ({  taskToEdit, setTaskToEdit }) => {
+const TaskForm = ({ taskToEdit, setTaskToEdit }) => {
   const dispatch = useDispatch();
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
 
+  // Effect to set fields when editing a task
   useEffect(() => {
     if (taskToEdit) {
       setName(taskToEdit.name);
@@ -20,16 +20,19 @@ const TaskForm = ({  taskToEdit, setTaskToEdit }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (name && description) {
+    if (name.trim() && description.trim()) { // Ensure fields are not just whitespace
       const task = { name, description, isDone: false };
       if (taskToEdit) {
-        dispatch(updateTask({ ...task, id: taskToEdit.id }));
+        dispatch(updateTask({ ...task, id: taskToEdit.id })); // Dispatch update action
       } else {
-        dispatch(addTask(task));
+        dispatch(addTask(task)); // Dispatch add action
       }
+      // Reset the form and task to edit
+      setName('');
+      setDescription('');
       setTaskToEdit(null);
     } else {
-      alert('Please fill in both fields.');
+      alert('Veuillez remplir les deux champs.'); 
     }
   };
 
@@ -39,19 +42,20 @@ const TaskForm = ({  taskToEdit, setTaskToEdit }) => {
         type="text"
         value={name}
         onChange={(e) => setName(e.target.value)}
-        placeholder="Task Name"
+        placeholder="NAME"
         required
       />
       <input
         type="text"
         value={description}
         onChange={(e) => setDescription(e.target.value)}
-        placeholder="Task Description"
+        placeholder="Description "
         required
       />
-      <button type="submit">{taskToEdit ? 'Update Task' : 'Add Task'}</button>
+      <button type="submit">{taskToEdit ? 'Update' : 'ADD TO LIST'}</button>
     </form>
   );
 };
 
 export default TaskForm;
+

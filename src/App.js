@@ -1,18 +1,20 @@
 import React, { useState } from 'react';
-import { Provider, useDispatch, useSelector } from 'react-redux';
+import { Provider, useDispatch} from 'react-redux';
 import TaskForm from './Components/TaskForm';
 import TaskList from './Components/TaskList';
 import store from './Redux/store';
-import { deleteTask, toggleTask, filterTasks } from './Redux/taskActions';
+import { deleteTask, toggleTask, setFilter } from './Redux/taskActions';
 import './Styles.css';
 
 const App = () => {
-  const tasks = useSelector(state => state.tasks);
   const dispatch = useDispatch();
+  //const tasks = useSelector(state => state.tasks);
   const [taskToEdit, setTaskToEdit] = useState(null);
 
   const handleDeleteTask = (id) => {
-    dispatch(deleteTask(id));
+    if (window.confirm('Êtes-vous sûr de vouloir supprimer cette tâche ?')) {
+      dispatch(deleteTask(id));
+    }
   };
 
   const handleToggleTaskCompletion = (id) => {
@@ -20,18 +22,25 @@ const App = () => {
   };
 
   const handleFilterChange = (e) => {
-    dispatch(filterTasks(e.target.value));
+    dispatch(setFilter(e.target.value));
   };
 
   return (
     <div className="app">
+      <h1 style={{ textAlign: 'center', color: 'blue' }}>TO-DO LIST</h1>
       <TaskForm taskToEdit={taskToEdit} setTaskToEdit={setTaskToEdit} />
+      
       <select onChange={handleFilterChange}>
-        <option value="all">All</option>
-        <option value="completed">Completed</option>
-        <option value="incomplete">Incomplete</option>
+        <option value="all">Tout</option>
+        <option value="completed">Complété</option>
+        <option value="incomplete">Incomplet</option>
       </select>
-      <TaskList tasks={tasks} onEdit={setTaskToEdit} onDelete={handleDeleteTask} onToggle={handleToggleTaskCompletion} />
+      
+      <TaskList 
+        onEdit={setTaskToEdit} 
+        onDelete={handleDeleteTask} 
+        onToggle={handleToggleTaskCompletion} 
+      />
     </div>
   );
 };
